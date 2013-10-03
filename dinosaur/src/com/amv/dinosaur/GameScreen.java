@@ -88,12 +88,24 @@ public class GameScreen implements Screen, InputProcessor {
 		if (keycode == Keys.Z){
 			controller.jumpPressed();
 		}
+		else if (keycode == Keys.LEFT){
+			controller.leftPressed();
+		}
+		else if (keycode == Keys.RIGHT){
+			controller.rightPressed();
+		}
 		return true;
 	}
 	@Override
 	public boolean keyUp(int keycode) {
 		if (keycode == Keys.Z){
 			controller.jumpReleased();
+		}
+		if (keycode == Keys.LEFT){
+			controller.leftReleased();
+		}
+		if (keycode == Keys.RIGHT){
+			controller.rightReleased();
 		}
 		return true;
 	}

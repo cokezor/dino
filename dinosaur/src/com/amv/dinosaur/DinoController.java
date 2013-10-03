@@ -11,28 +11,48 @@ public class DinoController {
 	private boolean jumpPressed;
 	private long jumpPressTime;
 	
-	final float JUMPVELOCITY = 50f;
-	final float GRAVITY = -90.81f;
-	private static final long LONG_JUMP_PRESS = 1000l;
+	final float JUMPVELOCITY = 100f;
+	final float GRAVITY = -250.81f;
+	final float WALKSPEED = 40f;
+	private static final long LONG_JUMP_PRESS = 250l;
 	
 	public DinoController(Dinosaur dino){
 		this.dino = dino;
 	}
 	
 	enum Keys {
-		JUMP
+		JUMP, LEFT, RIGHT
 	}
 	
 	static Map<Keys, Boolean> keys = new HashMap<DinoController.Keys, Boolean>();
 	static{
 		keys.put(Keys.JUMP, false);
+		keys.put(Keys.LEFT, false);
+		keys.put(Keys.RIGHT, false);
 	}
 	
 	public void jumpPressed(){
 		keys.put(Keys.JUMP, true);
 	}
+	
 	public void jumpReleased(){
 		keys.put(Keys.JUMP, false);
+	}
+	
+	public void leftPressed(){
+		keys.put(Keys.LEFT, true);
+	}
+	
+	public void leftReleased(){
+		keys.put(Keys.LEFT, false);
+	}
+	
+	public void rightPressed(){
+		keys.put(Keys.RIGHT, true);
+	}
+	
+	public void rightReleased(){
+		keys.put(Keys.RIGHT, false);
 	}
 
 	public void update(float delta){
@@ -70,6 +90,15 @@ public class DinoController {
 						dino.velocity.y = JUMPVELOCITY;
 				}
 			}
+		}
+		if (keys.get(Keys.RIGHT)){
+			dino.velocity.x = WALKSPEED;
+		}
+		else if (keys.get(Keys.LEFT)){
+			dino.velocity.x = -WALKSPEED;
+		}
+		else {
+			dino.velocity.x = 0;
 		}
 	}
 }
