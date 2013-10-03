@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
@@ -12,29 +13,36 @@ public class GameScreen implements Screen, InputProcessor {
 	Dinosaur dino;
 	final DinosaurGame game;
 	Texture dinoImage;
+	Texture background;
 	DinoController controller;
+	private OrthographicCamera camera;
 	
 	public GameScreen(final DinosaurGame game){
 		this.game = game;
-		dino = new Dinosaur(new Vector2(800/2-64/2, 20));
-		controller = new DinoController();
+		camera = new OrthographicCamera();
+		//set the size of the camera
+		camera.setToOrtho(false, DinosaurGame.WIDTH, DinosaurGame.HEIGHT);
+		//set the dinosaur @ middle of the screen
+		dino = new Dinosaur(new Vector2(DinosaurGame.WIDTH / 2, 20));
+		controller = new DinoController(dino);
 		dinoImage = new Texture(Gdx.files.internal("images/dinosaur.png"));
+		background = new Texture(Gdx.files.internal("images/background.png"));
 	}
 	@Override
 	public void render(float delta) {
-		//set color to blue and clear screen
-		Gdx.gl.glClearColor(0, 0, 0.2f, 1);
+		//clear screen
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		
-		game.camera.update();
-		
+		System.out.println(camera.position.x + " " + camera.position.y);
+		System.out.println(dino.position.x + " " + dino.position.y);
+		camera.position.set(dino.position.x + 32, 160, 0);
+		camera.update();
+		controller.update(delta);
 		//use projection matrix specified by camera
-		game.batch.setProjectionMatrix(game.camera.combined);
-		
-		dino.update(delta);
-		
+		game.batch.setProjectionMatrix(camera.combined);
+	
 		//record all drawing commands from begin
 		game.batch.begin();
+		game.batch.draw(background, 0, 0);
 		game.batch.draw(dinoImage, dino.position.x, dino.position.y);
 		//send all sprites to be rendered
 		game.batch.end();
@@ -72,20 +80,20 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
+		Gdx.input.setInputProcessor(null);
 		
 	}
 	@Override
 	public boolean keyDown(int keycode) {
-		if (keycode == Keys.LEFT){
-			
+		if (keycode == Keys.Z){
+			controller.jumpPressed();
 		}
 		return true;
 	}
 	@Override
 	public boolean keyUp(int keycode) {
-		if (keycode == Keys.LEFT){
-			
+		if (keycode == Keys.Z){
+			controller.jumpReleased();
 		}
 		return true;
 	}

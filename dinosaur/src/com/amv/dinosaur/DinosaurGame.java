@@ -6,17 +6,16 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class DinosaurGame extends Game {
+	static final int WIDTH = 480;
+	static final int HEIGHT = 320;
 	SpriteBatch batch;
 	BitmapFont font;
-	OrthographicCamera camera;
 	
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
-		setScreen(new MainMenuScreen(this));	
+		setScreen(new GameScreen(this));	
 	}
 	
 	@Override
