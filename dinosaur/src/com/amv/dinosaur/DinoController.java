@@ -62,12 +62,15 @@ public class DinoController {
 		dino.acceleration.y = GRAVITY;
 		// v = a * t
 		dino.acceleration.mul(delta);
+		// v += acceleration
 		dino.velocity.add(dino.acceleration.x, dino.acceleration.y);
-		
+		//position += v * time
 		dino.position.add(dino.velocity.tmp().mul(delta));
+		//update bounds
 		dino.bounds.x = dino.position.x;
 		dino.bounds.y = dino.position.y;
 		
+		//if dinosaur hits the bottom of the screen
 		if (dino.position.y < 0){
 			dino.position.y = 0;
 			grounded = true;
@@ -75,6 +78,7 @@ public class DinoController {
 	}
 	
 	private void processInput(){
+		
 		if (keys.get(Keys.JUMP)){
 			if (grounded){
 				jumpPressed = true;
@@ -82,21 +86,27 @@ public class DinoController {
 				jumpPressTime = System.currentTimeMillis();
 				dino.velocity.y = JUMPVELOCITY;
 			} 
+			
 			else {
 				if (jumpPressed && ((System.currentTimeMillis() - jumpPressTime) >= LONG_JUMP_PRESS)){
 					jumpPressed = false;
-				} else {
+				}
+				//if user is holding on to jump
+				else {
 					if (jumpPressed)
 						dino.velocity.y = JUMPVELOCITY;
 				}
 			}
 		}
+		
 		if (keys.get(Keys.RIGHT)){
 			dino.velocity.x = WALKSPEED;
 		}
+		
 		else if (keys.get(Keys.LEFT)){
 			dino.velocity.x = -WALKSPEED;
 		}
+		
 		else {
 			dino.velocity.x = 0;
 		}

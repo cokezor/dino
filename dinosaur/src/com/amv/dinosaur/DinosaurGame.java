@@ -25,6 +25,19 @@ public class DinosaurGame extends Game {
 	}
 	
 	public void dispose(){
+		super.dispose();
 		batch.dispose();
+	}
+	
+	public void pause(){
+		super.pause();
+	}
+	
+	public void resize(int width, int height){
+		super.resize(width, height);
+	}
+	
+	public void resume(){
+		super.resume();
 	}
 }
