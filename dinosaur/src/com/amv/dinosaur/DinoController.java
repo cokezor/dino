@@ -65,7 +65,7 @@ public class DinoController {
 		// v += acceleration
 		dino.velocity.add(dino.acceleration.x, dino.acceleration.y);
 		//position += v * time
-		dino.position.add(dino.velocity.tmp().mul(delta));
+		dino.position.add(dino.velocity.cpy().mul(delta));
 		//update bounds
 		dino.bounds.x = dino.position.x;
 		dino.bounds.y = dino.position.y;

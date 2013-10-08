@@ -7,6 +7,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.Vector2;
 
 public class GameScreen implements Screen, InputProcessor {
@@ -16,6 +17,7 @@ public class GameScreen implements Screen, InputProcessor {
 	Texture background;
 	DinoController controller;
 	private OrthographicCamera camera;
+	private TiledMap map;
 	
 	public GameScreen(final DinosaurGame game){
 		this.game = game;
