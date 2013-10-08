@@ -11,9 +11,9 @@ public class DinoController {
 	private boolean jumpPressed;
 	private long jumpPressTime;
 	
-	final float JUMPVELOCITY = 100f;
-	final float GRAVITY = -250.81f;
-	final float WALKSPEED = 40f;
+	final float JUMPVELOCITY = 96f;
+	final float GRAVITY = -313.6f;
+	final float WALKSPEED = 64f;
 	private static final long LONG_JUMP_PRESS = 250l;
 	
 	public DinoController(Dinosaur dino){
@@ -61,11 +61,11 @@ public class DinoController {
 		//initial vertical acceleration
 		dino.acceleration.y = GRAVITY;
 		// v = a * t
-		dino.acceleration.mul(delta);
+		dino.acceleration.scl(delta);
 		// v += acceleration
 		dino.velocity.add(dino.acceleration.x, dino.acceleration.y);
 		//position += v * time
-		dino.position.add(dino.velocity.cpy().mul(delta));
+		dino.position.add(dino.velocity.cpy().scl(delta));
 		//update bounds
 		dino.bounds.x = dino.position.x;
 		dino.bounds.y = dino.position.y;

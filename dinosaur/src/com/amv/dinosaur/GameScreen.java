@@ -20,32 +20,40 @@ public class GameScreen implements Screen, InputProcessor {
 	private TiledMap map;
 	private OrthogonalTiledMapRenderer renderer;
 	
+	//make one pixel = 32x32 see 10x7
+	private static final float CAMERA_WIDTH = 320f;
+	private static final float CAMERA_HEIGHT = 224f;
+	
+	private float ppuX, ppuY;
+	
 	public GameScreen(final DinosaurGame game){
 		this.game = game;
 		camera = new OrthographicCamera();
-		//set the size of the camera
-		//camera.setToOrtho(false, DinosaurGame.WIDTH, DinosaurGame.HEIGHT);
+		camera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
+		//camera.position.set(5, 3.5f, 0);
+		//camera.update();
 		//set the dinosaur @ middle of the screen
-		dino = new Dinosaur(new Vector2(DinosaurGame.WIDTH / 2, 100));
+		dino = new Dinosaur(new Vector2(5,5));
 		controller = new DinoController(dino);
 	}
 	@Override
 	public void render(float delta) {
 		//clear screen
+		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-//		System.out.println(camera.position.x + " " + camera.position.y);
-//		System.out.println(dino.position.x + " " + dino.position.y);
+		System.out.println(camera.position.x + " " + camera.position.y);
+		System.out.println(dino.position.x + " " + dino.position.y);
 		//render the map
 		renderer.render();
 		renderer.setView(camera);
 		
-		camera.position.set(dino.position.x + 32, 160, 0);
-		camera.update();
+		//camera.position.set(dino.position.x + 32, 160, 0);
+		//camera.update();
 		
 		controller.update(delta);
-		
+		dino.update(delta);
 		//use projection matrix specified by camera
-		renderer.getSpriteBatch().setProjectionMatrix(camera.combined);
+		//renderer.getSpriteBatch().setProjectionMatrix(camera.combined);
 		//record all drawing commands from begin
 		renderer.getSpriteBatch().begin();
 		renderer.getSpriteBatch().draw(dino.image, dino.position.x, dino.position.y);
@@ -56,9 +64,6 @@ public class GameScreen implements Screen, InputProcessor {
 
 	@Override
 	public void resize(int width, int height) {
-		camera.viewportHeight = height;
-		camera.viewportWidth = width;
-		camera.update();
 	}
 
 	@Override
@@ -71,6 +76,7 @@ public class GameScreen implements Screen, InputProcessor {
 	@Override
 	public void hide() {
 		dispose();
+		Gdx.input.setInputProcessor(null);
 	}
 
 	@Override
