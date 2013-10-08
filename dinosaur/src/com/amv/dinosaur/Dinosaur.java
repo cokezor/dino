@@ -18,7 +18,19 @@ public class Dinosaur {
 		bounds.width = SIZE;
 		this.position.x = position.x;
 		this.position.y = position.y;
-		image = new Texture(Gdx.files.internal("images/smalldino.png"));
+		image = new Texture(Gdx.files.internal("images/box.png"));
+	}
+	
+	public Rectangle getBounds(){
+		return bounds;
+	}
+	
+	public int getX(){
+		return (int)position.x; 
+	}
+	
+	public int getY(){
+		return (int)position.y;
 	}
 	
 	public void update(float delta){

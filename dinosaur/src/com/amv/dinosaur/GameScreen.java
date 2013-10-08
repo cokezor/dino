@@ -6,8 +6,8 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -23,18 +23,18 @@ public class GameScreen implements Screen, InputProcessor {
 	//make one pixel = 32x32 see 10x7
 	private static final float CAMERA_WIDTH = 320f;
 	private static final float CAMERA_HEIGHT = 224f;
-	
+	private static final float SCALE = 32f;
 	private float ppuX, ppuY;
 	
 	public GameScreen(final DinosaurGame game){
 		this.game = game;
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
-		//camera.position.set(5, 3.5f, 0);
+		//camera.position.set(CAMERA_WIDTH / 2, CAMERA_HEIGHT / 2, 0);
 		//camera.update();
-		//set the dinosaur @ middle of the screen
-		dino = new Dinosaur(new Vector2(5,5));
-		controller = new DinoController(dino);
+		dino = new Dinosaur(new Vector2(5 * SCALE,5 * SCALE));
+		map = new TmxMapLoader().load("map/map.tmx");
+		controller = new DinoController(dino, (TiledMapTileLayer) map.getLayers().get(0));
 	}
 	@Override
 	public void render(float delta) {
@@ -47,8 +47,8 @@ public class GameScreen implements Screen, InputProcessor {
 		renderer.render();
 		renderer.setView(camera);
 		
-		//camera.position.set(dino.position.x + 32, 160, 0);
-		//camera.update();
+		camera.position.set(dino.position.x + 32, CAMERA_HEIGHT/2, 0);
+		camera.update();
 		
 		controller.update(delta);
 		dino.update(delta);
@@ -69,7 +69,7 @@ public class GameScreen implements Screen, InputProcessor {
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(this);
-		map = new TmxMapLoader().load("map/map.tmx");
+		
 		renderer = new OrthogonalTiledMapRenderer(map);
 	}
 
