@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.utils.TimeUtils;
 
 public class DinoController {
 	private Dinosaur dino;
@@ -13,20 +12,17 @@ public class DinoController {
 	private boolean jumpPressed;
 	private long jumpPressTime;
 
-	final float JUMPVELOCITY = 96f;
-	final float GRAVITY = -313.6f;
+	final float JUMPVELOCITY = 100f;
+	final float GRAVITY = -156.8f;
 	final float WALKSPEED = 64f;
 	private static final long LONG_JUMP_PRESS = 250l;
 
 	private TiledMapTileLayer collisionLayer;
 	boolean collideX = false, collideY = false;
-	float tileWidth, tileHeight;
 
 	public DinoController(Dinosaur dino, TiledMapTileLayer collisionLayer) {
 		this.dino = dino;
 		this.collisionLayer = collisionLayer;
-		tileWidth = collisionLayer.getWidth();
-		tileHeight = collisionLayer.getHeight();
 	}
 
 	enum Keys {
@@ -65,129 +61,51 @@ public class DinoController {
 	}
 
 	public void update(float delta) {
-		processInput();
-
-		// initial vertical acceleration
-		dino.acceleration.y = GRAVITY;
-		// v = a * t
-		dino.acceleration.scl(delta);
-		// v += acceleration
-		dino.velocity.add(dino.acceleration.x, dino.acceleration.y);
-		// position += v * time
-		dino.position.add(dino.velocity.cpy().scl(delta));
 		// update bounds
 		dino.bounds.x = dino.position.x;
 		dino.bounds.y = dino.position.y;
+		processInput(delta);
 
-		if (dino.velocity.x < 0) {
-			// top left of dino
-			collideX = collisionLayer
-					.getCell(
-							(int) (dino.getX() / tileWidth),
-							(int) ((dino.getY() + dino.getBounds().height) / tileHeight))
-					.getTile().getProperties().containsKey("blocked");
-
-			// middle left
-			if (!collideX)
-				collideX = collisionLayer
-						.getCell(
-								(int) (dino.getX() / tileWidth),
-								(int) ((dino.getY() + dino.getBounds().height / 2) / tileHeight))
-						.getTile().getProperties().containsKey("blocked");
-
-			// bottom left
-			if (!collideX)
-				collideX = collisionLayer
-						.getCell((int) (dino.getX() / tileWidth),
-								(int) (dino.getY() / tileHeight)).getTile()
-						.getProperties().containsKey("blocked");
-		} else if (dino.velocity.x > 0) {
-			// top right
-			collideX = collisionLayer
-					.getCell(
-							(int) ((dino.getX() + dino.getBounds().width) / tileWidth),
-							(int) ((dino.getY() + dino.getBounds().height) / tileHeight))
-					.getTile().getProperties().containsKey("blocked");
-			// middle right
-			if (!collideX)
-				collideX = collisionLayer
-						.getCell(
-								(int) ((dino.getX() + dino.getBounds().width) / tileWidth),
-								(int) ((dino.getY() + dino.getBounds().height / 2) / tileHeight))
-						.getTile().getProperties().containsKey("blocked");
-			// bottom right
-			if (!collideX)
-				collideX = collisionLayer
-						.getCell(
-								(int) ((dino.getX() + dino.getBounds().width) / tileWidth),
-								(int) ((dino.getY()) / tileHeight)).getTile()
-						.getProperties().containsKey("blocked");
-		}
-
-		if (collideX) {
-			dino.position.x -= delta * dino.velocity.x;
-
-		}
-		if (dino.velocity.y < 0){
-			collisionLayer.getCell(0, 6).getTile().getProperties().containsKey("blocked");
-			System.out.println("Blocked");
+		//apply gravity
+		dino.velocity.y += GRAVITY * delta;
+		//clamp velocity
+		
+		if (dino.velocity.y > 300){
+			dino.velocity.y = 300;
+		} else if (dino.velocity.y < -300){
+			dino.velocity.y = -300;
 		}
 		
+		// position += v * time
+		dino.position.add(dino.velocity.cpy().scl(delta));
 		
-		// if dinosaur hits the bottom of the screen
-//		if (dino.velocity.y < 0) {
-//			// bottom left
-//			collideY = collisionLayer
-//					.getCell(
-//							(int) ((dino.getX() + dino.getBounds().width / 2) / tileWidth),
-//							(int) (dino.getY() / tileHeight)).getTile()
-//					.getProperties().containsKey("blocked");
-//			// bottom middle
-//			if (!collideY)
-//				collideY = collisionLayer
-//						.getCell(
-//								(int) ((dino.getX() + dino.getBounds().width / 2) / tileWidth),
-//								(int) (dino.getY() / tileHeight)).getTile()
-//						.getProperties().containsKey("blocked");
-//			// bottom right
-//			if (!collideY)
-//				collideY = collisionLayer
-//						.getCell(
-//								(int) ((dino.getX() + dino.getBounds().width) / tileWidth),
-//								(int) ((dino.getY()) / tileHeight)).getTile()
-//						.getProperties().containsKey("blocked");
-//		} else if (dino.velocity.y > 0) {
-//			// top left
-//			collideY = collisionLayer
-//					.getCell(
-//							(int) ((dino.getX()) / tileWidth),
-//							(int) ((dino.getY() + dino.getBounds().height) / tileHeight))
-//					.getTile().getProperties().containsKey("blocked");
-//			// top middle
-//			if (!collideY)
-//				collideY = collisionLayer
-//						.getCell(
-//								(int) ((dino.getX() + dino.getBounds().width / 2) / tileWidth),
-//								(int) ((dino.getY() + dino.getBounds().height) / tileHeight))
-//						.getTile().getProperties().containsKey("blocked");
-//			// top right
-//			if (!collideY)
-//				collideY = collisionLayer
-//						.getCell(
-//								(int) ((dino.getX() + dino.getBounds().width) / tileWidth),
-//								(int) ((dino.getY() + dino.getBounds().height) / tileHeight))
-//						.getTile().getProperties().containsKey("blocked");
-//		}
-
-		if (collideY) {
-			dino.position.y -= delta * dino.velocity.y;
+		System.out.println(dino.velocity);
+		int cellX = (int) ((dino.getX()) / 32);
+		int cellY = (int) ((dino.getY()) / 32);
+		System.out.println("Cell (" + cellX + "," + cellY + ")" + " Position (" + dino.position.x + "," + dino.position.y + ")");
+		
+		//if dino is going up
+		if (dino.velocity.y > 0) {
+			collideY = collisionLayer
+					.getCell(
+							(int) ((dino.getX() + dino.getBounds().width / 2) / 32),
+							(int) ((dino.getY() + dino.getBounds().height) / 32))
+					.getTile().getProperties().containsKey("blocked");
+			//if dino is going down
+		} else if (dino.velocity.y < 0) {
+			collideY = collisionLayer
+					.getCell(
+							(int) ((dino.getX() + dino.getBounds().width / 2) / 32),
+							(int) ((dino.getY()) / 32))
+					.getTile().getProperties().containsKey("blocked");
 		}
-
-	}
-
-	private boolean isCellBlocked(Cell cell) {
-		return cell.getTile() != null
-				&& cell.getTile().getProperties().containsKey("blocked");
+		
+		//if dino is going down and there is a block
+		if (collideY && dino.velocity.y < 0){
+			dino.position.y = (cellY + 1) * 32;
+			dino.velocity.y = 0;
+		}
+		
 	}
 
 	public TiledMapTileLayer getCollisionLayer() {
@@ -198,12 +116,11 @@ public class DinoController {
 		this.collisionLayer = collisionLayer;
 	}
 
-	private void processInput() {
-
+	private void processInput(float delta) {
 		if (keys.get(Keys.JUMP)) {
 			if (grounded) {
 				jumpPressed = true;
-				grounded = false;
+				//grounded = false;
 				jumpPressTime = System.currentTimeMillis();
 				dino.velocity.y = JUMPVELOCITY;
 			}
@@ -222,13 +139,33 @@ public class DinoController {
 		}
 
 		if (keys.get(Keys.RIGHT)) {
-			dino.velocity.x = WALKSPEED;
+			collideX = collisionLayer
+					.getCell(
+							(int) ((dino.getX() + dino.getBounds().width) / 32),
+							(int) ((dino.getY()) / 32)).getTile()
+					.getProperties().containsKey("blocked");
+			if (collideX){
+				dino.velocity.x = 0;
+			}
+			else{ 
+				dino.velocity.x = WALKSPEED;
+			}
+			
 		}
 
 		else if (keys.get(Keys.LEFT)) {
-			dino.velocity.x = -WALKSPEED;
+			collideX = collisionLayer
+					.getCell((int) ((dino.getX()) / 32),
+							(int) ((dino.getY()) / 32)).getTile()
+					.getProperties().containsKey("blocked");
+			if (collideX){
+				dino.velocity.x = 0;
+			}
+			else{
+				dino.velocity.x = -WALKSPEED;
+			}
 		}
-
+		//if neither left or right are pressed
 		else {
 			dino.velocity.x = 0;
 		}

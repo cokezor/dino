@@ -24,7 +24,6 @@ public class GameScreen implements Screen, InputProcessor {
 	private static final float CAMERA_WIDTH = 320f;
 	private static final float CAMERA_HEIGHT = 224f;
 	private static final float SCALE = 32f;
-	private float ppuX, ppuY;
 	
 	public GameScreen(final DinosaurGame game){
 		this.game = game;
@@ -32,7 +31,7 @@ public class GameScreen implements Screen, InputProcessor {
 		camera.setToOrtho(false, CAMERA_WIDTH, CAMERA_HEIGHT);
 		//camera.position.set(CAMERA_WIDTH / 2, CAMERA_HEIGHT / 2, 0);
 		//camera.update();
-		dino = new Dinosaur(new Vector2(5 * SCALE,5 * SCALE));
+		dino = new Dinosaur(new Vector2(1 * SCALE, 5 * SCALE));
 		map = new TmxMapLoader().load("map/map.tmx");
 		controller = new DinoController(dino, (TiledMapTileLayer) map.getLayers().get(0));
 	}
@@ -41,13 +40,14 @@ public class GameScreen implements Screen, InputProcessor {
 		//clear screen
 		Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-		System.out.println(camera.position.x + " " + camera.position.y);
-		System.out.println(dino.position.x + " " + dino.position.y);
+//		System.out.println(camera.position.x + " " + camera.position.y);
+		
+		//System.out.println("Dino position x " + dino.position.x + " Dino position y " + dino.position.y);
 		//render the map
 		renderer.render();
 		renderer.setView(camera);
 		
-		camera.position.set(dino.position.x + 32, CAMERA_HEIGHT/2, 0);
+		//camera.position.set(dino.position.x + 32, CAMERA_HEIGHT/2, 0);
 		camera.update();
 		
 		controller.update(delta);
